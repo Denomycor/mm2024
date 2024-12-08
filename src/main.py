@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn import tree
 from sklearn.model_selection import train_test_split
+from sklearn.model_selection import cross_val_score
 
 
 def load_data(fname):
@@ -34,7 +35,7 @@ def print_matrix(array):
 table_X, table_y, features, target = load_data("../data/PetFinder_dataset.csv")
 
 
-features_to_remove = ['Name', 'PetID', 'Description', 'RescuerID']
+features_to_remove = ['Name', 'PetID', 'Description', 'RescuerID', 'State']
 table_X, features = remove_features(table_X, features, features_to_remove)
 
 print_matrix(table_X)
@@ -44,7 +45,13 @@ table_y = table_y.astype(float)
 
 train_X, test_X, train_y, test_y = train_test_split(table_X, table_y, random_state=0)
 
-dtc_Gini = tree.DecisionTreeClassifier(random_state = 0, criterion="gini", splitter='best')
+
+dtc_Gini = tree.DecisionTreeClassifier(random_state = 0, criterion="gini", splitter='best', max_depth=5)
 dtc_Gini = dtc_Gini.fit(train_X, train_y)
+
+for i in range(len(features)):
+    print(features[i], ": ", dtc_Gini.feature_importances_[i])
+
+
 print(dtc_Gini.score(test_X, test_y))
 
